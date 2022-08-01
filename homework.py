@@ -81,21 +81,19 @@ def main():
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
 
-    latest_message = ''
     while True:
         try:
             response = get_api_answer()
-            check_response(response)
-            time.sleep(RETRY_TIME)
+            homeworks = check_response(response)
+            if len(homeworks):
+                message = parse_status(homeworks[-1])
+                send_message(bot, message)
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
+            send_message(bot, message)
             logger.error(message)
-            if latest_message != message:
-                send_message(bot, message)
-                latest_message = message
+        finally:
             time.sleep(RETRY_TIME)
-        else:
-            ...
 
 
 if __name__ == '__main__':
