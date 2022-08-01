@@ -6,7 +6,6 @@ import time
 import requests
 import telegram
 from dotenv import load_dotenv
-from telegram import TelegramError
 
 load_dotenv()
 
@@ -32,11 +31,8 @@ logging.basicConfig(
 
 
 def send_message(bot, message):
-    try:
-        bot.send_message(TELEGRAM_CHAT_ID, message)
-        logging.info(f'Бот отправил сообщение "{message}"')
-    except TelegramError:
-        logging.error('Сбой при отправке сообщения')
+    bot.send_message(TELEGRAM_CHAT_ID, message)
+    logging.info(f'Бот отправил сообщение "{message}"')
 
 
 def get_api_answer(current_timestamp):
@@ -46,7 +42,8 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response):
-    return response.json()['homeworks']
+    json = response.json()
+    return json['homeworks']
 
 
 def parse_status(homework):
@@ -58,9 +55,9 @@ def parse_status(homework):
 
 def check_tokens():
     for v in ENV_VARS:
-        if v is None:
-            logging.critical(
-                f'Отсутствует обязательная переменная окружения: "{v}"')
+        if os.getenv(v) is None:
+            message = f'Отсутствует обязательная переменная окружения: "{v}"'
+            logging.critical(message)
             return False
     return True
 
@@ -71,23 +68,22 @@ def main():
     if not check_tokens():
         sys.exit(1)
 
-    bot = telegram.Bot(token=TELEGRAM_TOKEN).send_message
+    bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
 
     ...
 
     while True:
         try:
-            response = ...
+            response = get_api_answer(current_timestamp)
+            check_response(response)
 
-            ...
-
-            current_timestamp = ...
+            current_timestamp = int(time.time())
             time.sleep(RETRY_TIME)
 
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
-            ...
+            logging.error(message)
             time.sleep(RETRY_TIME)
         else:
             ...
