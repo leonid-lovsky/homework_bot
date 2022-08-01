@@ -9,8 +9,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-ENV_VARS = ['PRACTICUM_TOKEN', 'TELEGRAM_TOKEN', 'TELEGRAM_CHAT_ID']
-
 PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
@@ -55,11 +53,21 @@ def parse_status(homework):
 
 
 def check_tokens():
-    for v in ENV_VARS:
-        if os.getenv(v) is None:
-            message = f'Отсутствует обязательная переменная окружения: "{v}"'
-            logger.critical(message)
-            return False
+    if PRACTICUM_TOKEN is None:
+        logging.critical(
+            'Отсутствует обязательная переменная окружения: '
+            '"PRACTICUM_TOKEN"')
+        return False
+    if TELEGRAM_TOKEN is None:
+        logging.critical(
+            'Отсутствует обязательная переменная окружения: '
+            '"TELEGRAM_TOKEN"')
+        return False
+    if TELEGRAM_CHAT_ID is None:
+        logging.critical(
+            'Отсутствует обязательная переменная окружения: '
+            '"TELEGRAM_CHAT_ID"')
+        return False
     return True
 
 
