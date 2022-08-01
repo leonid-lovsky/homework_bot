@@ -77,7 +77,9 @@ def main():
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             logging.error(message)
-            send_message(bot, message)
+            if latest_message != message:
+                send_message(bot, message)
+                latest_message = message
             time.sleep(RETRY_TIME)
         else:
             ...
