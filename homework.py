@@ -25,14 +25,16 @@ HOMEWORK_STATUSES = {
     'rejected': 'Работа проверена: у ревьюера есть замечания.'
 }
 
-logging.basicConfig(
-    format='%(asctime)s %(levelname)s %(message)s',
-)
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
 def send_message(bot, message):
     bot.send_message(TELEGRAM_CHAT_ID, message)
-    logging.info(f'Бот отправил сообщение "{message}"')
+    logger.info(f'Бот отправил сообщение "{message}"')
 
 
 def get_api_answer(timestamp=0):
@@ -56,7 +58,7 @@ def check_tokens():
     for v in ENV_VARS:
         if os.getenv(v) is None:
             message = f'Отсутствует обязательная переменная окружения: "{v}"'
-            logging.critical(message)
+            logger.critical(message)
             return False
     return True
 
@@ -76,7 +78,7 @@ def main():
             time.sleep(RETRY_TIME)
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
-            logging.error(message)
+            logger.error(message)
             if latest_message != message:
                 send_message(bot, message)
                 latest_message = message
@@ -89,4 +91,4 @@ if __name__ == '__main__':
     try:
         main()
     except SystemExit:
-        logging.critical(f'Программа принудительно остановлена.')
+        logger.critical(f'Программа принудительно остановлена.')
