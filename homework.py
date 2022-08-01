@@ -35,10 +35,10 @@ def send_message(bot, message):
     logging.info(f'Бот отправил сообщение "{message}"')
 
 
-def get_api_answer(current_timestamp):
-    timestamp = current_timestamp or int(time.time())
+def get_api_answer(timestamp=0):
     params = {'from_date': timestamp}
-    return requests.get(ENDPOINT, headers=HEADERS, params=params).json()
+    response = requests.get(ENDPOINT, headers=HEADERS, params=params)
+    return response.json()
 
 
 def check_response(response):
@@ -67,14 +67,12 @@ def main():
         sys.exit(1)
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    current_timestamp = int(time.time())
+    latest_message = ''
 
     while True:
         try:
-            response = get_api_answer(current_timestamp)
+            response = get_api_answer()
             check_response(response)
-
-            current_timestamp = int(time.time())
             time.sleep(RETRY_TIME)
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
