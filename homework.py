@@ -24,6 +24,7 @@ HOMEWORK_STATUSES = {
 }
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 handler.setFormatter(formatter)
@@ -56,17 +57,17 @@ def parse_status(homework):
 
 def check_tokens():
     if PRACTICUM_TOKEN is None:
-        logging.critical(
+        logger.critical(
             'Отсутствует обязательная переменная окружения: '
             '"PRACTICUM_TOKEN"')
         return False
     if TELEGRAM_TOKEN is None:
-        logging.critical(
+        logger.critical(
             'Отсутствует обязательная переменная окружения: '
             '"TELEGRAM_TOKEN"')
         return False
     if TELEGRAM_CHAT_ID is None:
-        logging.critical(
+        logger.critical(
             'Отсутствует обязательная переменная окружения: '
             '"TELEGRAM_CHAT_ID"')
         return False
@@ -79,8 +80,8 @@ def main():
         sys.exit(1)
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    latest_message = ''
 
+    latest_message = ''
     while True:
         try:
             response = get_api_answer()
@@ -98,7 +99,4 @@ def main():
 
 
 if __name__ == '__main__':
-    try:
-        main()
-    except SystemExit:
-        logger.critical(f'Программа принудительно остановлена.')
+    main()
