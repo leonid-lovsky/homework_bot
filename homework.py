@@ -6,8 +6,11 @@ import time
 import requests
 import telegram
 from dotenv import load_dotenv
+from telegram import TelegramError
 
 load_dotenv()
+
+ENV_VARS = ['PRACTICUM_TOKEN', 'TELEGRAM_TOKEN', 'TELEGRAM_CHAT_ID']
 
 PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
@@ -29,7 +32,11 @@ logging.basicConfig(
 
 
 def send_message(bot, message):
-    bot.send_message(TELEGRAM_CHAT_ID, message)
+    try:
+        bot.send_message(TELEGRAM_CHAT_ID, message)
+        logging.info(f'Бот отправил сообщение "{message}"')
+    except TelegramError:
+        logging.error('Сбой при отправке сообщения')
 
 
 def get_api_answer(current_timestamp):
@@ -50,21 +57,11 @@ def parse_status(homework):
 
 
 def check_tokens():
-    if PRACTICUM_TOKEN is not None:
-        logging.critical(
-            'Отсутствует обязательная переменная окружения: '
-            '"PRACTICUM_TOKEN"')
-        return False
-    if TELEGRAM_TOKEN is not None:
-        logging.critical(
-            'Отсутствует обязательная переменная окружения: '
-            '"TELEGRAM_TOKEN"')
-        return False
-    if TELEGRAM_CHAT_ID is not None:
-        logging.critical(
-            'Отсутствует обязательная переменная окружения: '
-            '"TELEGRAM_CHAT_ID"')
-        return False
+    for v in ENV_VARS:
+        if v is None:
+            logging.critical(
+                f'Отсутствует обязательная переменная окружения: "{v}"')
+            return False
     return True
 
 
@@ -74,7 +71,7 @@ def main():
     if not check_tokens():
         sys.exit(1)
 
-    bot = telegram.Bot(token=TELEGRAM_TOKEN)
+    bot = telegram.Bot(token=TELEGRAM_TOKEN).send_message
     current_timestamp = int(time.time())
 
     ...
