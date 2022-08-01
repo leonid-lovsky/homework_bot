@@ -38,10 +38,12 @@ def send_message(bot, message):
 def get_api_answer(timestamp=0):
     params = {'from_date': timestamp}
     response = requests.get(ENDPOINT, headers=HEADERS, params=params)
+    assert response.status_code == 200
     return response.json()
 
 
 def check_response(response):
+    assert isinstance(response['homeworks'], list)
     return response['homeworks']
 
 
