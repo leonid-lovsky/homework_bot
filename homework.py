@@ -1,4 +1,6 @@
+import logging
 import os
+import sys
 import time
 
 import requests
@@ -20,6 +22,10 @@ HOMEWORK_STATUSES = {
     'reviewing': 'Работа взята на проверку ревьюером.',
     'rejected': 'Работа проверена: у ревьюера есть замечания.'
 }
+
+logging.basicConfig(
+    format='%(asctime)s %(levelname)s %(message)s',
+)
 
 
 def send_message(bot, message):
@@ -45,10 +51,19 @@ def parse_status(homework):
 
 def check_tokens():
     if PRACTICUM_TOKEN is not None:
+        logging.critical(
+            'Отсутствует обязательная переменная окружения: '
+            '"PRACTICUM_TOKEN"')
         return False
     if TELEGRAM_TOKEN is not None:
+        logging.critical(
+            'Отсутствует обязательная переменная окружения: '
+            '"TELEGRAM_TOKEN"')
         return False
     if TELEGRAM_CHAT_ID is not None:
+        logging.critical(
+            'Отсутствует обязательная переменная окружения: '
+            '"TELEGRAM_CHAT_ID"')
         return False
     return True
 
@@ -56,7 +71,8 @@ def check_tokens():
 def main():
     """Основная логика работы бота."""
 
-    ...
+    if not check_tokens():
+        sys.exit(1)
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
@@ -81,4 +97,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except SystemExit:
+        logging.critical(f'Программа принудительно остановлена.')
