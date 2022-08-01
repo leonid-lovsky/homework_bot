@@ -38,12 +38,11 @@ def send_message(bot, message):
 def get_api_answer(current_timestamp):
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
-    return requests.get(ENDPOINT, headers=HEADERS, params=params)
+    return requests.get(ENDPOINT, headers=HEADERS, params=params).json()
 
 
 def check_response(response):
-    json = response.json()
-    return json['homeworks']
+    return response['homeworks']
 
 
 def parse_status(homework):
@@ -64,14 +63,11 @@ def check_tokens():
 
 def main():
     """Основная логика работы бота."""
-
     if not check_tokens():
         sys.exit(1)
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
-
-    ...
 
     while True:
         try:
@@ -80,10 +76,10 @@ def main():
 
             current_timestamp = int(time.time())
             time.sleep(RETRY_TIME)
-
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             logging.error(message)
+            send_message(bot, message)
             time.sleep(RETRY_TIME)
         else:
             ...
