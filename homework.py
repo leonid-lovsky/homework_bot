@@ -88,7 +88,7 @@ def main():
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
 
-    error_message = ''
+    latest_error = None
 
     while True:
         try:
@@ -98,14 +98,16 @@ def main():
                 message = parse_status(homework)
                 send_message(bot, message)
             current_timestamp = response['current_date']
-            time.sleep(RETRY_TIME)
         except Exception as error:
-            message = f'Сбой в работе программы: {error}'
-            logger.error(message)
-            if error_message != message:
+            logger.exception(error)
+            if latest_error != error:
+                if str(error):
+                    message = f'Сбой в работе программы: {error}'
+                else:
+                    message = f'Сбой в работе программы.'
                 send_message(bot, message)
-                error_message = message
-            time.sleep(RETRY_TIME)
+                latest_error = error
+        time.sleep(RETRY_TIME)
 
 
 if __name__ == '__main__':
