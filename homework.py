@@ -36,7 +36,8 @@ def send_message(bot, message):
     logger.info(f'Бот отправил сообщение "{message}"')
 
 
-def get_api_answer(timestamp=0):
+def get_api_answer(current_timestamp):
+    timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
     response = requests.get(ENDPOINT, headers=HEADERS, params=params)
     assert response.status_code == 200
@@ -76,24 +77,29 @@ def check_tokens():
 
 def main():
     """Основная логика работы бота."""
+
     if not check_tokens():
         sys.exit(1)
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
+    current_timestamp = int(time.time())
 
     while True:
         try:
-            response = get_api_answer()
+            response = get_api_answer(current_timestamp)
             homeworks = check_response(response)
-            if len(homeworks):
-                message = parse_status(homeworks[-1])
+            for homework in homeworks:
+                message = parse_status(homework)
                 send_message(bot, message)
+            current_timestamp = response['current_date']
+            time.sleep(RETRY_TIME)
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             send_message(bot, message)
             logger.error(message)
-        finally:
             time.sleep(RETRY_TIME)
+        else:
+            ...
 
 
 if __name__ == '__main__':
