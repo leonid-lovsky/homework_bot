@@ -83,7 +83,7 @@ def check_tokens():
 def main():
     """Основная логика работы бота."""
     if not check_tokens():
-        sys.exit(1)
+        sys.exit("Не удалось установить переменные окружения.")
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
@@ -107,7 +107,8 @@ def main():
                     message = f'Сбой в работе программы.'
                 send_message(bot, message)
                 latest_error = error
-        time.sleep(RETRY_TIME)
+        finally:
+            time.sleep(RETRY_TIME)
 
 
 if __name__ == '__main__':
