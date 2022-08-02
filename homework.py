@@ -32,11 +32,13 @@ logger.addHandler(handler)
 
 
 def send_message(bot, message):
+    """Отправляет сообщение в Telegram чат."""
     bot.send_message(TELEGRAM_CHAT_ID, message)
     logger.info(f'Бот отправил сообщение "{message}"')
 
 
 def get_api_answer(current_timestamp):
+    """Делает запрос к единственному эндпоинту API-сервиса."""
     timestamp = current_timestamp or int(time.time())
     params = {'from_date': timestamp}
     response = requests.get(ENDPOINT, headers=HEADERS, params=params)
@@ -45,11 +47,14 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response):
+    """Проверяет ответ API на корректность."""
     assert isinstance(response['homeworks'], list)
     return response['homeworks']
 
 
 def parse_status(homework):
+    """Извлекает из информации о конкретной домашней работе статус этой
+    работы."""
     homework_name = homework['homework_name']
     homework_status = homework['status']
     verdict = HOMEWORK_STATUSES[homework_status]
@@ -57,6 +62,7 @@ def parse_status(homework):
 
 
 def check_tokens():
+    """Проверяет доступность переменных окружения."""
     if PRACTICUM_TOKEN is None:
         logger.critical(
             'Отсутствует обязательная переменная окружения: '
@@ -77,7 +83,6 @@ def check_tokens():
 
 def main():
     """Основная логика работы бота."""
-
     if not check_tokens():
         sys.exit(1)
 
