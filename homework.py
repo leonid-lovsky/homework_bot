@@ -141,7 +141,8 @@ def parse_status(homework):
 def check_tokens():
     """Проверяет переменных окружения."""
     logger.debug('Проверка переменных окружения.')
-
+    # TODO: отсутствие обязательных переменных окружения во время запуска бота (уровень CRITICAL).
+    
     if PRACTICUM_TOKEN is None:
         logger.critical(
             'Отсутствует переменная окружения: '
