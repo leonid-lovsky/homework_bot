@@ -182,7 +182,6 @@ def main():
             if latest_error != error:
                 message = f'Сбой в работе программы: {error}'
                 send_message(bot, message)
-
                 latest_error = error
 
         finally:
