@@ -40,7 +40,7 @@ def send_message(bot, message):
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
     except TelegramError as error:
-        raise Exception('Невозможно отправить сообщение.') from error
+        raise IOError('Невозможно отправить сообщение.') from error
     else:
         logger.info(f'Сообщение отправлено в чат: "{message}"')
 
@@ -55,7 +55,7 @@ def get_api_answer(current_timestamp):
         if response.status_code != HTTPStatus.OK:
             raise RequestException(response=response)
     except RequestException as error:
-        raise Exception(
+        raise IOError(
             'Невозможно выполнить запрос. Код ответа: '
             f'{error.response.status_code}'
         ) from error
@@ -67,19 +67,19 @@ def check_response(response):
     """Проверяет ответ от API."""
     logger.debug('Проверка ответа от API.')
     if not isinstance(response, dict):
-        raise KeyError(
+        raise TypeError(
             'Ответ от API не является не cловарем.'
             f' response = {response}.'
         )
     homeworks = response.get('homeworks')
     if not isinstance(homeworks, list):
-        raise KeyError(
+        raise TypeError(
             'В ответе от API под ключом "homeworks" пришел не список.'
             f' response = {response}.'
         )
     timestamp = response.get('current_date')
     if not isinstance(timestamp, int):
-        raise KeyError(
+        raise TypeError(
             'В ответе от API под ключом "current_date" пришло не целое число.'
             f' response = {response}.'
         )
