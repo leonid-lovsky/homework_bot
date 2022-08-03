@@ -46,7 +46,7 @@ def send_message(bot, message):
         raise Exception(
             'Ошибка во время отправки сообщения') from error
     else:
-        logger.info(f'Сообщение успешно отправлено "{message}"')
+        logger.info(f'Сообщение отправлено "{message}"')
 
 
 def get_api_answer(current_timestamp):
