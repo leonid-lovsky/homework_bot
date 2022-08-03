@@ -171,7 +171,9 @@ def main():
                 message = parse_status(homework)
                 send_message(bot, message)
 
-            # TODO: отсутствие в ответе новых статусов (уровень DEBUG).
+            if not len(homeworks):
+                logger.debug('Статус проверки работ не изменился.')
+
             current_timestamp = response['current_date']
 
         except Exception as error:
