@@ -109,7 +109,7 @@ def parse_status(homework):
     if 'homework_name' not in homework:
         raise KeyError(
             'В ответе от API отсутствует ключ "homework_name".'
-            f' response = {homework}.'
+            f' homework = {homework}.'
         )
     if not isinstance(homework_name, str):
         raise TypeError(
@@ -120,11 +120,16 @@ def parse_status(homework):
     if 'status' not in homework:
         raise KeyError(
             'В ответе от API отсутствует ключ "status".'
-            f' response = {homework}.'
+            f' homework = {homework}.'
         )
     if not isinstance(status, str):
         raise TypeError(
             'В ответе от API под ключом "status" пришла не строка.'
+            f' homework = {homework}.'
+        )
+    if status not in HOMEWORK_STATUSES:
+        raise KeyError(
+            'Недокументированный статус домашней работы'
             f' homework = {homework}.'
         )
     verdict = HOMEWORK_STATUSES[status]
