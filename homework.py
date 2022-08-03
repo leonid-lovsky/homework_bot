@@ -8,6 +8,7 @@ import requests
 import telegram
 from dotenv import load_dotenv
 from requests import RequestException
+from telegram import TelegramError
 
 load_dotenv()
 
@@ -33,41 +34,47 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
+# noinspection SpellCheckingInspection
 def send_message(bot, message):
     """Отправляет сообщение в Telegram чат."""
+    logger.debug('Отправка сообщения в Telegram чат...')
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
-    except Exception as error:
+    except TelegramError as error:
         raise Exception(
-            'Ошибка во время отправки сообщения в Telegram чат') from error
+            'Ошибка во время отправки сообщения') from error
     else:
-        logger.info(f'Бот отправил сообщение "{message}"')
+        logger.info(f'Сообщение успешно отправлено "{message}"')
 
 
 def get_api_answer(current_timestamp):
     """Делает запрос к API-сервису."""
+    logger.debug('Выполнение запроса к API-сервису...')
     try:
         timestamp = current_timestamp or int(time.time())
         params = {'from_date': timestamp}
         response = requests.get(ENDPOINT, headers=HEADERS, params=params)
         if response.status_code != HTTPStatus.OK:
             raise RequestException(response)
-    except Exception as error:
+    except RequestException as error:
         raise Exception(
-            'Ошибка во время выполнения запроса к API-сервису') from error
+            'Ошибка во время выполнения запроса: '
+            f'{error.response.status_code}') from error
     else:
-        logger.info(f'Выполнение запроса к API-сервису')
+        logger.info(f'Запрос успешно выполнен')
         return response.json()
 
 
 def check_response(response):
     """Проверяет ответ API на корректность."""
+    logger.debug('Проверка ответа API на корректность...')
     assert isinstance(response['homeworks'], list)
     return response['homeworks']
 
 
 def parse_status(homework):
     """Извлекает статус домашней работы."""
+    logger.debug('Извлечение статуса домашней работы...')
     homework_name = homework['homework_name']
     homework_status = homework['status']
     verdict = HOMEWORK_STATUSES[homework_status]
@@ -76,6 +83,7 @@ def parse_status(homework):
 
 def check_tokens():
     """Проверяет доступность переменных окружения."""
+    logger.debug('Проверка доступности переменных окружения...')
     if PRACTICUM_TOKEN is None:
         logger.critical(
             'Отсутствует обязательная переменная окружения: '
@@ -96,6 +104,8 @@ def check_tokens():
 
 def main():
     """Основная логика работы бота."""
+    logger.debug('Начало работы...')
+
     if not check_tokens():
         sys.exit("Не удалось установить переменные окружения.")
 
