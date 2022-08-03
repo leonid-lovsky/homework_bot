@@ -60,7 +60,7 @@ def get_api_answer(current_timestamp):
     # TODO: любые другие сбои при запросе к эндпоинту (уровень ERROR);
     except RequestException as error:
         raise IOError(
-            'Невозможно выполнить запрос к API. Код ответа: '
+            'Ошибка при выполнении запроса к API. Код ответа: '
             f'{error.response.status_code}'
         ) from error
     else:
