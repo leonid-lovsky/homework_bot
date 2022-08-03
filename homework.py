@@ -12,6 +12,8 @@ from telegram import TelegramError
 
 load_dotenv()
 
+ENV_VARS = ['PRACTICUM_TOKEN', 'TELEGRAM_TOKEN', 'TELEGRAM_CHAT_ID']
+
 PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
@@ -58,8 +60,8 @@ def get_api_answer(current_timestamp):
     # TODO: любые другие сбои при запросе к эндпоинту (уровень ERROR);
     except RequestException as error:
         raise IOError(
-            'Невозможно выполнить запрос к API. Код ответа:'
-            f' {error.response.status_code}'
+            'Невозможно выполнить запрос к API. Код ответа: '
+            f'{error.response.status_code}'
         ) from error
     else:
         return response.json()
@@ -139,39 +141,21 @@ def parse_status(homework):
 
 
 def check_tokens():
-    """Проверяет переменные окружения."""
-    logger.debug('Проверка переменных окружения.')
-    # TODO: отсутствие обязательных переменных окружения во время запуска бота (уровень CRITICAL).
-
-    if PRACTICUM_TOKEN is None:
-        logger.critical(
-            'Отсутствует переменная окружения: '
-            '"PRACTICUM_TOKEN"')
-
-        return False
-
-    if TELEGRAM_TOKEN is None:
-        logger.critical(
-            'Отсутствует переменная окружения: '
-            '"TELEGRAM_TOKEN"')
-
-        return False
-
-    if TELEGRAM_CHAT_ID is None:
-        logger.critical(
-            'Отсутствует переменная окружения: '
-            '"TELEGRAM_CHAT_ID"')
-
-        return False
-
-    return True
+    """Проверяет обязательные переменные окружения."""
+    logger.debug('Проверка обязательных переменных окружения.')
+    return all((PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID))
 
 
 def main():
     """Основная логика работы."""
     if not check_tokens():
-        # TODO: отсутствие обязательных переменных окружения во время запуска бота (уровень CRITICAL).
-        sys.exit("Не удалось установить переменные окружения.")
+        message = 'Отсутствует обязательная переменная окружения: '
+        for v in ENV_VARS:
+            if v not in os.environ:
+                message += '\'' + v + '\''
+        message += '\nПрограмма принудительно остановлена.'
+        logger.critical(message)
+        sys.exit(message)
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
