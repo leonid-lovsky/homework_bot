@@ -2,10 +2,12 @@ import logging
 import os
 import sys
 import time
+from http import HTTPStatus
 
 import requests
 import telegram
 from dotenv import load_dotenv
+from requests import RequestException
 
 load_dotenv()
 
@@ -33,17 +35,29 @@ logger.addHandler(handler)
 
 def send_message(bot, message):
     """Отправляет сообщение в Telegram чат."""
-    bot.send_message(TELEGRAM_CHAT_ID, message)
-    logger.info(f'Бот отправил сообщение "{message}"')
+    try:
+        bot.send_message(TELEGRAM_CHAT_ID, message)
+    except Exception as error:
+        raise Exception(
+            'Ошибка во время отправки сообщения в Telegram чат') from error
+    else:
+        logger.info(f'Бот отправил сообщение "{message}"')
 
 
 def get_api_answer(current_timestamp):
-    """Делает запрос к единственному эндпоинту API-сервиса."""
-    timestamp = current_timestamp or int(time.time())
-    params = {'from_date': timestamp}
-    response = requests.get(ENDPOINT, headers=HEADERS, params=params)
-    assert response.status_code == 200
-    return response.json()
+    """Делает запрос к API-сервису."""
+    try:
+        timestamp = current_timestamp or int(time.time())
+        params = {'from_date': timestamp}
+        response = requests.get(ENDPOINT, headers=HEADERS, params=params)
+        if response != HTTPStatus.OK:
+            raise RequestException(response)
+    except Exception as error:
+        raise Exception(
+            'Ошибка во время выполнения запроса к API-сервису') from error
+    else:
+        logger.info(f'Выполнение запроса к API-сервису')
+        return response.json()
 
 
 def check_response(response):
