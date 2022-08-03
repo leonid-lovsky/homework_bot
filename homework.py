@@ -68,19 +68,19 @@ def check_response(response):
     logger.debug('Проверка ответа от API.')
     if not isinstance(response, dict):
         raise TypeError(
-            'Ответ от API не является не cловарем.'
+            'Рассматриваемый объект не cловарем.'
             f' response = {response}.'
         )
     homeworks = response.get('homeworks')
     if not isinstance(homeworks, list):
         raise TypeError(
-            'В ответе от API под ключом "homeworks" пришел не список.'
+            'Значение под ключом "homeworks" не является списком.'
             f' response = {response}.'
         )
-    timestamp = response.get('current_date')
-    if not isinstance(timestamp, int):
+    current_date = response.get('current_date')
+    if not isinstance(current_date, int):
         raise TypeError(
-            'В ответе от API под ключом "current_date" пришло не целое число.'
+            'Значение под ключом "current_date" не является целым числом.'
             f' response = {response}.'
         )
     return homeworks
@@ -89,11 +89,24 @@ def check_response(response):
 def parse_status(homework):
     """Извлекает статус домашней работы."""
     logger.debug('Извлечение статуса домашней работы.')
-
-    homework_name = homework['homework_name']
-    homework_status = homework['status']
-    verdict = HOMEWORK_STATUSES[homework_status]
-
+    if not isinstance(homework, dict):
+        raise TypeError(
+            'Рассматриваемый объект не является не cловарем.'
+            f' homework = {homework}.'
+        )
+    homework_name = homework.get('homework_name')
+    if not isinstance(homework_name, str):
+        raise TypeError(
+            'Значение под ключом "homework_name" не является строкой.'
+            f' homework = {homework}.'
+        )
+    status = homework.get('status')
+    if not isinstance(status, str):
+        raise TypeError(
+            'Значение под ключом "status" не является строкой.'
+            f' homework = {homework}.'
+        )
+    verdict = HOMEWORK_STATUSES[status]
     return f'Изменился статус проверки работы "{homework_name}". {verdict}'
 
 
@@ -103,21 +116,21 @@ def check_tokens():
 
     if PRACTICUM_TOKEN is None:
         logger.critical(
-            'Отсутствует обязательная переменная окружения: '
+            'Отсутствует переменная окружения: '
             '"PRACTICUM_TOKEN"')
 
         return False
 
     if TELEGRAM_TOKEN is None:
         logger.critical(
-            'Отсутствует обязательная переменная окружения: '
+            'Отсутствует переменная окружения: '
             '"TELEGRAM_TOKEN"')
 
         return False
 
     if TELEGRAM_CHAT_ID is None:
         logger.critical(
-            'Отсутствует обязательная переменная окружения: '
+            'Отсутствует переменная окружения: '
             '"TELEGRAM_CHAT_ID"')
 
         return False
