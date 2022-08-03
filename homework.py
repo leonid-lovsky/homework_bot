@@ -63,7 +63,8 @@ def get_api_answer(current_timestamp):
 
     except RequestException as error:
         raise Exception(
-            'Ошибка во время выполнения запроса') from error
+            f'Ошибка во время выполнения запроса: '
+            f'{error.response.status_code}') from error
 
     else:
         logger.info(f'Запрос успешно выполнен')
