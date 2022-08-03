@@ -129,7 +129,7 @@ def parse_status(homework):
         )
     if status not in HOMEWORK_STATUSES:
         raise KeyError(
-            'Недокументированный статус домашней работы'
+            'Недокументированный статус домашней работы.'
             f' homework = {homework}.'
         )
     verdict = HOMEWORK_STATUSES[status]
