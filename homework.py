@@ -100,18 +100,21 @@ def check_tokens():
         logger.critical(
             'Отсутствует обязательная переменная окружения: '
             '"PRACTICUM_TOKEN"')
+
         return False
 
     if TELEGRAM_TOKEN is None:
         logger.critical(
             'Отсутствует обязательная переменная окружения: '
             '"TELEGRAM_TOKEN"')
+
         return False
 
     if TELEGRAM_CHAT_ID is None:
         logger.critical(
             'Отсутствует обязательная переменная окружения: '
             '"TELEGRAM_CHAT_ID"')
+
         return False
 
     return True
@@ -133,9 +136,11 @@ def main():
         try:
             response = get_api_answer(current_timestamp)
             homeworks = check_response(response)
+
             for homework in homeworks:
                 message = parse_status(homework)
                 send_message(bot, message)
+
             current_timestamp = response['current_date']
 
         except Exception as error:
@@ -147,6 +152,7 @@ def main():
                 else:
                     message = f'Сбой в работе программы.'
                 send_message(bot, message)
+
                 latest_error = error
 
         finally:
