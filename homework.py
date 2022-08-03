@@ -64,8 +64,8 @@ def get_api_answer(current_timestamp):
 
 
 def check_response(response):
-    """Проверяет ответ от API на корректность."""
-    logger.debug('Проверка ответа от API на корректность.')
+    """Проверяет ответ от API."""
+    logger.debug('Проверка ответа от API.')
     if not isinstance(response, dict):
         raise KeyError(
             'Ответ от API не является не cловарем.'
