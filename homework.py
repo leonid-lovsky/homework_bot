@@ -45,6 +45,7 @@ def send_message(bot, message):
     except TelegramError as error:
         raise Exception(
             'Ошибка во время отправки сообщения') from error
+
     else:
         logger.info(f'Сообщение отправлено "{message}"')
 
