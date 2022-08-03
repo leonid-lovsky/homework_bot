@@ -72,7 +72,7 @@ def check_response(response):
             f' response = {response}.'
         )
     homeworks = response.get('homeworks')
-    if homeworks is None:
+    if 'homeworks' not in response:
         raise KeyError(
             'В ответе от API отсутствует ключ "homeworks".'
             f' response = {response}.'
@@ -83,7 +83,7 @@ def check_response(response):
             f' response = {response}.'
         )
     current_date = response.get('current_date')
-    if current_date is None:
+    if 'current_date' not in response:
         raise KeyError(
             'В ответе от API отсутствует ключ "current_date".'
             f' response = {response}.'
@@ -106,7 +106,7 @@ def parse_status(homework):
             f' homework = {homework}.'
         )
     homework_name = homework.get('homework_name')
-    if homework_name is None:
+    if 'homework_name' not in homework:
         raise KeyError(
             'В ответе от API отсутствует ключ "homework_name".'
             f' response = {homework}.'
@@ -117,7 +117,7 @@ def parse_status(homework):
             f' homework = {homework}.'
         )
     status = homework.get('status')
-    if status is None:
+    if 'status' not in homework:
         raise KeyError(
             'В ответе от API отсутствует ключ "status".'
             f' response = {homework}.'
