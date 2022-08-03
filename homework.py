@@ -40,7 +40,7 @@ def send_message(bot, message):
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
     except TelegramError as error:
-        raise IOError('Невозможно отправить сообщение.') from error
+        raise IOError('Невозможно отправить сообщение в чат.') from error
     else:
         logger.info(f'Сообщение отправлено в чат: "{message}"')
 
@@ -56,7 +56,7 @@ def get_api_answer(current_timestamp):
             raise RequestException(response=response)
     except RequestException as error:
         raise IOError(
-            'Невозможно выполнить запрос. Код ответа: '
+            'Невозможно выполнить запрос к API. Код ответа: '
             f'{error.response.status_code}'
         ) from error
     else:
@@ -68,19 +68,30 @@ def check_response(response):
     logger.debug('Проверка ответа от API.')
     if not isinstance(response, dict):
         raise TypeError(
-            'Рассматриваемый объект не cловарем.'
+            'В ответ на запрос от API пришел не словарь.'
             f' response = {response}.'
         )
     homeworks = response.get('homeworks')
+    if homeworks is None:
+        raise KeyError(
+            'В ответе от API отсутствует ключ "homeworks".'
+            f' response = {response}.'
+        )
     if not isinstance(homeworks, list):
         raise TypeError(
-            'Значение под ключом "homeworks" не является списком.'
+            'В ответе от API под ключом "homeworks" пришел не список.'
             f' response = {response}.'
         )
     current_date = response.get('current_date')
+    if current_date is None:
+        raise KeyError(
+            'В ответе от API отсутствует ключ "current_date".'
+            f' response = {response}.'
+        )
     if not isinstance(current_date, int):
         raise TypeError(
-            'Значение под ключом "current_date" не является целым числом.'
+            'В ответе от API под ключом "current_date" пришло не число '
+            '(целое).'
             f' response = {response}.'
         )
     return homeworks
