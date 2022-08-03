@@ -35,49 +35,42 @@ logger.addHandler(handler)
 
 
 def send_message(bot, message):
-    """Отправляет сообщение в Telegram чат."""
-    logger.debug('Отправка сообщения в Telegram чат...')
-
+    """Отправляет сообщение в чат."""
+    debug_message = 'Отправка сообщения'
+    logger.debug(debug_message)
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
-
     except TelegramError as error:
-        raise Exception(
-            'Ошибка во время отправки сообщения'
-        ) from error
-
+        error_message = 'Ошибка во время отправки сообщения'
+        raise Exception(error_message) from error
     else:
-        logger.info(f'Сообщение отправлено "{message}"')
+        info_message = f'Сообщение отправлено "{message}"'
+        logger.info(info_message)
 
 
 def get_api_answer(current_timestamp):
-    """Делает запрос к API-сервису."""
-    logger.debug('Выполнение запроса к API-сервису...')
-
+    """Выполняет запрос к сервису."""
+    debug_message = 'Выполнение запроса'
+    logger.debug(debug_message)
     try:
         timestamp = current_timestamp or int(time.time())
         params = {'from_date': timestamp}
         response = requests.get(ENDPOINT, headers=HEADERS, params=params)
-
         if response != HTTPStatus.OK:
             raise RequestException(response=response)
-
     except RequestException as error:
-        raise
-    #     raise Exception(
-    #         'Ошибка во время выполнения запроса: '
-    #         f'{error.response.status_code}'
-    #     ) from error
-
+        error_message = (f'Ошибка во время выполнения запроса: '
+                         f'{error.response.status_code}')
+        raise Exception(error_message) from error
     else:
-        logger.info(f'Запрос успешно выполнен')
-
+        info_message = 'Запрос выполнен'
+        logger.info(info_message)
         return response.json()
 
 
 def check_response(response):
-    """Проверяет ответ API на корректность."""
-    logger.debug('Проверка ответа API на корректность...')
+    """Проверяет ответ от сервиса на корректность."""
+    logger.debug('Проверка ответа')
 
     assert isinstance(response['homeworks'], list)
 
@@ -86,7 +79,7 @@ def check_response(response):
 
 def parse_status(homework):
     """Извлекает статус домашней работы."""
-    logger.debug('Извлечение статуса домашней работы...')
+    logger.debug('Извлечение статуса')
 
     homework_name = homework['homework_name']
     homework_status = homework['status']
