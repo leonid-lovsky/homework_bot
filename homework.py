@@ -178,6 +178,7 @@ def main():
                 message = parse_status(homework)
                 send_message(bot, message)
 
+            # TODO: Статус проверки работ не изменился
             current_timestamp = response['current_date']
 
         except Exception as error:
