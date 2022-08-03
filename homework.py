@@ -44,7 +44,7 @@ def send_message(bot, message):
         error_message = 'Невозможно отправить сообщение'
         raise Exception(error_message) from error
     else:
-        info_message = f'Сообщение отправлено: "{message}"'
+        info_message = f'Сообщение отправлено в чат: "{message}"'
         logger.info(info_message)
 
 
