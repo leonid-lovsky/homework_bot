@@ -34,7 +34,6 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-# noinspection SpellCheckingInspection
 def send_message(bot, message):
     """Отправляет сообщение в Telegram чат."""
     logger.debug('Отправка сообщения в Telegram чат...')
@@ -44,7 +43,8 @@ def send_message(bot, message):
 
     except TelegramError as error:
         raise Exception(
-            'Ошибка во время отправки сообщения') from error
+            'Ошибка во время отправки сообщения'
+        ) from error
 
     else:
         logger.info(f'Сообщение отправлено "{message}"')
@@ -59,13 +59,15 @@ def get_api_answer(current_timestamp):
         params = {'from_date': timestamp}
         response = requests.get(ENDPOINT, headers=HEADERS, params=params)
 
-        if response.status_code != HTTPStatus.OK:
+        if response != HTTPStatus.OK:
             raise RequestException(response=response)
 
     except RequestException as error:
-        raise Exception(
-            f'Ошибка во время выполнения запроса: '
-            f'{error.response.status_code}') from error
+        raise
+    #     raise Exception(
+    #         'Ошибка во время выполнения запроса: '
+    #         f'{error.response.status_code}'
+    #     ) from error
 
     else:
         logger.info(f'Запрос успешно выполнен')
