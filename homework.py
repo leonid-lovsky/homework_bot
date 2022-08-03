@@ -29,7 +29,7 @@ HOMEWORK_STATUSES = {
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+formatter = logging.Formatter('%(asctime)s [%(levelname)] %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
@@ -41,10 +41,10 @@ def send_message(bot, message):
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
     except TelegramError as error:
-        error_message = 'Ошибка во время отправки сообщения'
+        error_message = 'Невозможно отправить сообщение'
         raise Exception(error_message) from error
     else:
-        info_message = f'Сообщение отправлено "{message}"'
+        info_message = f'Сообщение отправлено: "{message}"'
         logger.info(info_message)
 
 
@@ -56,10 +56,10 @@ def get_api_answer(current_timestamp):
         timestamp = current_timestamp or int(time.time())
         params = {'from_date': timestamp}
         response = requests.get(ENDPOINT, headers=HEADERS, params=params)
-        if response != HTTPStatus.OK:
+        if response.status_code != HTTPStatus.OK:
             raise RequestException(response=response)
     except RequestException as error:
-        error_message = (f'Ошибка во время выполнения запроса: '
+        error_message = ('Невозможно выполнить запрос. Код ответа: '
                          f'{error.response.status_code}')
         raise Exception(error_message) from error
     else:
@@ -143,10 +143,7 @@ def main():
             logger.exception(error)
 
             if latest_error != error:
-                if str(error):
-                    message = f'Сбой в работе программы: {error}'
-                else:
-                    message = f'Сбой в работе программы.'
+                message = f'Сбой в работе программы: {error}'
                 send_message(bot, message)
 
                 latest_error = error
