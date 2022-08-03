@@ -35,14 +35,14 @@ logger.addHandler(handler)
 
 
 def send_message(bot, message):
-    """Отправляет сообщение в чат."""
-    logger.debug('Отправка сообщения в чат.')
+    """Отправляет сообщение в Telegram."""
+    logger.debug('Отправка сообщения в Telegram.')
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
     except TelegramError as error:
-        raise IOError('Невозможно отправить сообщение в чат.') from error
+        raise IOError('Невозможно отправить сообщение в Telegram.') from error
     else:
-        logger.info(f'Сообщение отправлено в чат: "{message}"')
+        logger.info(f'Сообщение отправлено в Telegram: "{message}"')
 
 
 def get_api_answer(current_timestamp):
@@ -54,6 +54,8 @@ def get_api_answer(current_timestamp):
         response = requests.get(ENDPOINT, headers=HEADERS, params=params)
         if response.status_code != HTTPStatus.OK:
             raise RequestException(response=response)
+    # TODO: недоступность эндпоинта https://practicum.yandex.ru/api/user_api/homework_statuses/ (уровень ERROR);
+    # TODO: любые другие сбои при запросе к эндпоинту (уровень ERROR);
     except RequestException as error:
         raise IOError(
             'Невозможно выполнить запрос к API. Код ответа:'
@@ -167,6 +169,7 @@ def check_tokens():
 def main():
     """Основная логика работы."""
     if not check_tokens():
+        # TODO: отсутствие обязательных переменных окружения во время запуска бота (уровень CRITICAL).
         sys.exit("Не удалось установить переменные окружения.")
 
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
@@ -183,7 +186,7 @@ def main():
                 message = parse_status(homework)
                 send_message(bot, message)
 
-            # TODO: Статус проверки работ не изменился
+            # TODO: отсутствие в ответе новых статусов (уровень DEBUG).
             current_timestamp = response['current_date']
 
         except Exception as error:
