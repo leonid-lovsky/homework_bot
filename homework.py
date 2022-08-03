@@ -29,7 +29,7 @@ HOMEWORK_STATUSES = {
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s [%(levelname)] %(message)s')
+formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
@@ -63,7 +63,7 @@ def get_api_answer(current_timestamp):
                          f'{error.response.status_code}')
         raise Exception(error_message) from error
     else:
-        info_message = 'Запрос выполнен'
+        info_message = 'Запрос к сервису выполнен'
         logger.info(info_message)
         return response.json()
 
