@@ -88,7 +88,7 @@ def check_response(response):
 
 def parse_status(homework):
     """Извлекает статус домашней работы."""
-    logger.debug('Извлечение статуса домашней работы')
+    logger.debug('Извлечение статуса домашней работы.')
 
     homework_name = homework['homework_name']
     homework_status = homework['status']
@@ -98,8 +98,8 @@ def parse_status(homework):
 
 
 def check_tokens():
-    """Проверяет доступность переменных окружения."""
-    logger.debug('Проверка доступности переменных окружения')
+    """Проверяет переменных окружения."""
+    logger.debug('Проверка переменных окружения.')
 
     if PRACTICUM_TOKEN is None:
         logger.critical(
