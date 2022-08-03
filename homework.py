@@ -36,7 +36,7 @@ logger.addHandler(handler)
 
 def send_message(bot, message):
     """Отправляет сообщение в чат."""
-    debug_message = 'Отправка сообщения'
+    debug_message = 'Отправка сообщения в чат'
     logger.debug(debug_message)
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
@@ -50,7 +50,7 @@ def send_message(bot, message):
 
 def get_api_answer(current_timestamp):
     """Выполняет запрос к сервису."""
-    debug_message = 'Выполнение запроса'
+    debug_message = 'Выполнение запроса к сервису'
     logger.debug(debug_message)
     try:
         timestamp = current_timestamp or int(time.time())
@@ -70,7 +70,7 @@ def get_api_answer(current_timestamp):
 
 def check_response(response):
     """Проверяет ответ от сервиса на корректность."""
-    logger.debug('Проверка ответа')
+    logger.debug('Проверка ответа от сервиса на корректность')
 
     assert isinstance(response['homeworks'], list)
 
@@ -79,7 +79,7 @@ def check_response(response):
 
 def parse_status(homework):
     """Извлекает статус домашней работы."""
-    logger.debug('Извлечение статуса')
+    logger.debug('Извлечение статуса домашней работы')
 
     homework_name = homework['homework_name']
     homework_status = homework['status']
@@ -90,7 +90,7 @@ def parse_status(homework):
 
 def check_tokens():
     """Проверяет доступность переменных окружения."""
-    logger.debug('Проверка доступности переменных окружения...')
+    logger.debug('Проверка доступности переменных окружения')
 
     if PRACTICUM_TOKEN is None:
         logger.critical(
@@ -118,8 +118,6 @@ def check_tokens():
 
 def main():
     """Основная логика работы бота."""
-    logger.debug('Начало работы...')
-
     if not check_tokens():
         sys.exit("Не удалось установить переменные окружения.")
 
