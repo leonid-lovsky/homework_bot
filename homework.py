@@ -36,22 +36,18 @@ logger.addHandler(handler)
 
 def send_message(bot, message):
     """Отправляет сообщение в чат."""
-    debug_message = 'Отправка сообщения в чат'
-    logger.debug(debug_message)
+    logger.debug('Отправка сообщения в чат.')
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
     except TelegramError as error:
-        error_message = 'Невозможно отправить сообщение'
-        raise Exception(error_message) from error
+        raise Exception('Невозможно отправить сообщение.') from error
     else:
-        info_message = f'Сообщение отправлено в чат: "{message}"'
-        logger.info(info_message)
+        logger.info(f'Сообщение отправлено в чат: "{message}"')
 
 
 def get_api_answer(current_timestamp):
-    """Выполняет запрос к сервису."""
-    debug_message = 'Выполнение запроса к сервису'
-    logger.debug(debug_message)
+    """Выполняет запрос к API."""
+    logger.debug('Выполнение запроса к API.')
     try:
         timestamp = current_timestamp or int(time.time())
         params = {'from_date': timestamp}
@@ -59,22 +55,35 @@ def get_api_answer(current_timestamp):
         if response.status_code != HTTPStatus.OK:
             raise RequestException(response=response)
     except RequestException as error:
-        error_message = ('Невозможно выполнить запрос. Код ответа: '
-                         f'{error.response.status_code}')
-        raise Exception(error_message) from error
+        raise Exception(
+            'Невозможно выполнить запрос. Код ответа: '
+            f'{error.response.status_code}'
+        ) from error
     else:
-        info_message = 'Запрос к сервису выполнен'
-        logger.info(info_message)
         return response.json()
 
 
 def check_response(response):
-    """Проверяет ответ от сервиса на корректность."""
-    logger.debug('Проверка ответа от сервиса на корректность')
-
-    assert isinstance(response['homeworks'], list)
-
-    return response['homeworks']
+    """Проверяет ответ от API на корректность."""
+    logger.debug('Проверка ответа от API на корректность.')
+    if not isinstance(response, dict):
+        raise KeyError(
+            'Ответ от API не является не cловарем.'
+            f' response = {response}.'
+        )
+    homeworks = response.get('homeworks')
+    if not isinstance(homeworks, list):
+        raise KeyError(
+            'В ответе от API под ключом "homeworks" пришел не список.'
+            f' response = {response}.'
+        )
+    timestamp = response.get('current_date')
+    if not isinstance(timestamp, int):
+        raise KeyError(
+            'В ответе от API под ключом "current_date" пришло не целое число.'
+            f' response = {response}.'
+        )
+    return homeworks
 
 
 def parse_status(homework):
