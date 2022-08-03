@@ -56,8 +56,8 @@ def get_api_answer(current_timestamp):
             raise RequestException(response=response)
     except RequestException as error:
         raise IOError(
-            'Невозможно выполнить запрос к API. Код ответа: '
-            f'{error.response.status_code}'
+            'Невозможно выполнить запрос к API. Код ответа:'
+            f' {error.response.status_code}'
         ) from error
     else:
         return response.json()
@@ -90,8 +90,8 @@ def check_response(response):
         )
     if not isinstance(current_date, int):
         raise TypeError(
-            'В ответе от API под ключом "current_date" пришло не число '
-            '(целое).'
+            'В ответе от API под ключом "current_date" пришло не число'
+            ' (целое).'
             f' response = {response}.'
         )
     return homeworks
@@ -102,19 +102,29 @@ def parse_status(homework):
     logger.debug('Извлечение статуса домашней работы.')
     if not isinstance(homework, dict):
         raise TypeError(
-            'Рассматриваемый объект не является не cловарем.'
+            'В ответ на запрос от API пришел не словарь.'
             f' homework = {homework}.'
         )
     homework_name = homework.get('homework_name')
+    if homework_name is None:
+        raise KeyError(
+            'В ответе от API отсутствует ключ "homework_name".'
+            f' response = {homework}.'
+        )
     if not isinstance(homework_name, str):
         raise TypeError(
-            'Значение под ключом "homework_name" не является строкой.'
+            'В ответе от API под ключом "homework_name" пришла не строка.'
             f' homework = {homework}.'
         )
     status = homework.get('status')
+    if status is None:
+        raise KeyError(
+            'В ответе от API отсутствует ключ "status".'
+            f' response = {homework}.'
+        )
     if not isinstance(status, str):
         raise TypeError(
-            'Значение под ключом "status" не является строкой.'
+            'В ответе от API под ключом "status" пришла не строка.'
             f' homework = {homework}.'
         )
     verdict = HOMEWORK_STATUSES[status]
