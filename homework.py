@@ -56,8 +56,6 @@ def get_api_answer(current_timestamp):
         response = requests.get(ENDPOINT, headers=HEADERS, params=params)
         if response.status_code != HTTPStatus.OK:
             raise RequestException(response=response)
-    # TODO: недоступность эндпоинта https://practicum.yandex.ru/api/user_api/homework_statuses/ (уровень ERROR);
-    # TODO: любые другие сбои при запросе к эндпоинту (уровень ERROR);
     except RequestException as error:
         raise IOError(
             'Ошибка при выполнении запроса к API. Код ответа: '
